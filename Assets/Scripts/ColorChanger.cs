@@ -1,20 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
- 
-public class ColorChanger : MonoBehaviour, IInteractable {
- 
+
+public class ColorChanger : MonoBehaviour, IInteractable
+{
+
     Material mat;
- 
-    private void Start() {
+
+    private void Start()
+    {
         mat = GetComponent<MeshRenderer>().material;
     }
- 
-    public string GetDescription() {
-        return "Change to a random colour";
+
+    public string GetDescription()
+    {
+        return "Mudar para uma Cor Aleatoria.";
     }
- 
-    public void Interact() {
+
+    public void Interact()
+    {
         mat.color = new Color(Random.value, Random.value, Random.value);
     }
 }
