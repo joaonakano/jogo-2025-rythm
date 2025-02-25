@@ -1,73 +1,56 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class CharacterController : MonoBehaviour
 {
-    public float moveSpeed;
-    //public Rigidbody rigidB;
-    public float jumpForce;
-    public CharacterController controller;
+    private UnityEngine.CharacterController controller;
+    private Vector3 playerVelocity;
+    private bool groundedPlayer;
+    private float playerSpeed = 2.0f;
+    private float jumpHeight = 2.0f;
+    private float gravityValue = -9.81f;
+    private float rotationSpeed = 700;
+    private Animator animator;
 
-    private Vector3 moveDirection;
-    public float gravityScale;
-
-    public Animator Animate;
-
-    public Transform pivot;
-    public float rotateSpeed;
-
-    public GameObject playerModel;
-
-    // Start is called before the first frame update
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //rigidB = GetComponent<Rigidbody>();
-        controller = GetComponent<CharacterController>();
-
+        animator = GetComponent<Animator>();
+        controller = gameObject.GetComponent<UnityEngine.CharacterController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // rigidB.velocity = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, rigidB.velocity.y, Input.GetAxis("Vertical") * moveSpeed);
-
-        /*
-         if(Input.GetButtonDown("Jump"))
-         {
-             rigidB.velocity = new Vector3(rigidB.velocity.x, jumpForce, rigidB.velocity.z);
-
-         }
-         */
-        // moveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, moveDirection.y, Input.GetAxis("Vertical") * moveSpeed);
-
-        float yStore = moveDirection.y;
-        moveDirection = (transform.forward * Input.GetAxis("Vertical")) 
-            + (transform.right * Input.GetAxis("Horizontal")) ;
-        moveDirection = moveDirection.normalized * moveSpeed;
-        moveDirection.y = yStore;
-
-        if (controller.isGrounded)
+        groundedPlayer = controller.isGrounded;
+        if (groundedPlayer && playerVelocity.y < 0)
         {
-            moveDirection.y = 0f;
-            if (Input.GetButtonDown("Jump"))
-            {
-                moveDirection.y = jumpForce;
-            }
+            playerVelocity.y = -2f;
+            animator.SetBool("isJumping", false);
         }
 
-        moveDirection.y = moveDirection.y + (Physics.gravity.y * Time.deltaTime * gravityScale);
-        controller.Move(moveDirection * Time.deltaTime);
+        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        move.Normalize();
+        controller.Move(move * Time.deltaTime * playerSpeed);
 
-        if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+        if (move != Vector3.zero)
         {
-            transform.rotation = Quaternion.Euler(0f, pivot.rotation.eulerAngles.y, 0f);
-            Quaternion newRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0f, moveDirection.z));
-            playerModel.transform.rotation = Quaternion.Slerp(playerModel.transform.rotation, newRotation, rotateSpeed * Time.deltaTime);
+            animator.SetBool("isMoving", true);
+            // gameObject.transform.forward = move; // Personagem vira para a direção de controle imediatamente
+            Quaternion toRotation = Quaternion.LookRotation(move, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        } else
+        {
+            animator.SetBool("isMoving", false);
         }
 
-        Animate.SetBool("isGrounded", controller.isGrounded);
+        // Makes the player jump
+        if (Input.GetButtonDown("Jump") && groundedPlayer)
+        {
+            animator.SetBool("isJumping", true);
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
+        }
 
-        Animate.SetFloat("Speed", (Mathf.Abs(Input.GetAxis("Vertical")) + Mathf.Abs(Input.GetAxis("Horizontal"))));
+            playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
     }
 }
