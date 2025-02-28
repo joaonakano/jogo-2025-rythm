@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "jogo-2025-rhythm.sln"
+    "dotnet.defaultSolution": "jogo-2025-rythm.sln"
 }
