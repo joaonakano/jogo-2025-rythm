@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Moeda
   description: Uma moeda com valor de 10 pontos
-  itemModel: {fileID: 0}
+  itemModel: {fileID: 5945566616019946070, guid: ad8460500de3fbb458f5114e37944582, type: 3}
