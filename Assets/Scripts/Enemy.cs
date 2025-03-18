@@ -4,14 +4,12 @@ public class Enemy : MonoBehaviour
 {
     public EnemyScriptableObject enemySettings;
 
-    public string name;
-    public float health;
+    public Material color;
     public float speed;
 
     private void Start()
     {
-        name = enemySettings.name;
-        health = enemySettings.health;
+        color = enemySettings.color;
         speed = enemySettings.speed;
     }
 }

@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2cf4a85ee430a1347b582152650ffcba, type: 3}
-  m_Name: enemySettings
+  m_Name: slowEnemy
   m_EditorClassIdentifier: 
-  name: Poeira Negra
-  health: 2
-  speed: 5
+  speed: 1
+  color: {fileID: 2100000, guid: 5f7a882365963ab4d86892ac15a82dca, type: 2}

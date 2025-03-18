@@ -2,65 +2,36 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    private Enemy _enemySettings;
+    public EnemyScriptableObject _enemySettings;
 
-    private float _speed;
+    public Transform Player;
 
-    [SerializeField]
-    private float _rotationSpeed;
+    private float _moveSpeed;
+    private Material _material;
+    private int _maxDistance;
+    private int _minDistance;
 
-    private Rigidbody _rigidBody;
-    private PlayerAwarenessController _playerAwarenessController;
-    private Vector3 _targetDirection;
 
-    private void Awake()
+    private void Start()
     {
-        _enemySettings = GetComponent<Enemy>();
-        _playerAwarenessController = GetComponent<PlayerAwarenessController>();
-        _rigidBody = GetComponent<Rigidbody>();
-        _speed = _enemySettings.speed;
+        _material = _enemySettings.color;
+        _moveSpeed = _enemySettings.speed;
+
+        gameObject.GetComponent<MeshRenderer>().material = _material;
     }
 
-    void FixedUpdate()
+    private void Update()
     {
-        UpdateTargetDirection();
-        RotateTowardsTarget();
-        SetVelocity();
-    }
+        transform.LookAt(Player);
 
-    private void UpdateTargetDirection()
-    {
-        if (_playerAwarenessController.AwareOfPlayer)
+        if (Vector3.Distance(transform.position, Player.position) >= _minDistance)
         {
-            _targetDirection = _playerAwarenessController.DirectionToPlayer;
-        }
-        else
-        {
-            _targetDirection = Vector3.zero;
-        }
-    }
+            transform.position += transform.forward * _moveSpeed * Time.deltaTime;
 
-    private void RotateTowardsTarget()
-    {
-        if(_targetDirection == Vector3.zero)
-        {
-            return;
-        }
+            if (Vector3.Distance(transform.position, Player.position) <= _maxDistance)
+            {
 
-        Quaternion targetRotation = Quaternion.LookRotation(_targetDirection, transform.up);
-        Quaternion rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-        _rigidBody.MoveRotation(rotation);
-    }
-
-    private void SetVelocity()
-    {
-        if (_targetDirection == Vector3.zero) {
-            return;
-        }
-        else
-        {
-            Vector3 moveDirection = _targetDirection.normalized * _speed * Time.deltaTime;
-            _rigidBody.MovePosition(_rigidBody.position + moveDirection);
+            }
         }
     }
 }
